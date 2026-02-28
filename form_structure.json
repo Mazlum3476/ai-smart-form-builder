@@ -1,0 +1,46 @@
+{
+    "form_title": "Lojistik Firmam Var İş Başvuru Formu",
+    "fields": [
+        {
+            "id": "name",
+            "label": "Adınız",
+            "type": "text",
+            "required": true
+        },
+        {
+            "id": "surname",
+            "label": "Soyadınız",
+            "type": "text",
+            "required": true
+        },
+        {
+            "id": "phone_number",
+            "label": "Telefon Numaranız",
+            "type": "text",
+            "required": true
+        },
+        {
+            "id": "email",
+            "label": "Email Adresiniz",
+            "type": "email",
+            "required": true
+        },
+        {
+            "id": "logistic_experience",
+            "label": "Lojistik Sektöründe Kaç Yıl Erfanınız Var?",
+            "type": "number",
+            "required": true
+        },
+        {
+            "id": "transport_mode",
+            "label": "Nasıl Taşınır?",
+            "options": [
+                "Kargo",
+                "Ticari Ulaşım",
+                "Havalimanı",
+                "Denizyolu"
+            ],
+            "type": "select"
+        }
+    ]
+}

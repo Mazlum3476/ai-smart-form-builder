@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Form Builder - Yönetici Paneli</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .cm-s-dracula.CodeMirror { height: 100%; border-radius: 8px; font-size: 14px; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white h-screen flex flex-col overflow-hidden">
+
+    <header class="bg-gray-800 border-b border-gray-700 h-16 flex items-center justify-between px-6 shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="bg-blue-600 p-2 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                </svg>
+            </div>
+            <h1 class="text-xl font-bold tracking-tight">AI Form <span class="text-blue-400">Builder</span></h1>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <a href="admin.php" class="text-gray-300 hover:text-white text-sm font-medium transition flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                </svg>
+                Yönetici Paneli
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-1 flex overflow-hidden">
+        
+        <div class="w-1/2 flex flex-col border-r border-gray-700 bg-gray-900">
+            <div class="p-4 bg-gray-800 border-b border-gray-700">
+                <div class="flex items-center gap-2 text-yellow-400 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="font-bold text-sm">Nasıl Çalışır?</span>
+                </div>
+                <p class="text-xs text-gray-400">
+                    Terminale (Python) istediğin formu söyle, burası otomatik dolacak. 
+                    İstersen aşağıdaki JSON kodunu elle de düzeltebilirsin.
+                </p>
+            </div>
+
+            <div class="flex-1 overflow-hidden relative">
+                <textarea id="jsonEditor"></textarea>
+            </div>
+
+            <div class="p-4 bg-gray-800 border-t border-gray-700 flex justify-between items-center">
+                <span id="statusMsg" class="text-xs text-gray-500">Değişiklikler bekleniyor...</span>
+                <button onclick="updatePreview()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow-lg text-sm font-bold transition">
+                    ⚡ Önizlemeyi Güncelle
+                </button>
+            </div>
+        </div>
+
+        <div class="w-1/2 bg-gray-100 flex flex-col h-full">
+            
+            <div class="bg-white border-b border-gray-200 p-4 flex justify-between items-center shadow-sm shrink-0">
+                <h2 class="text-gray-500 font-bold text-xs uppercase tracking-widest flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    Canlı Önizleme Modu
+                </h2>
+                
+                <a href="view.html" target="_blank" 
+                   class="bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-2 px-4 rounded-full flex items-center gap-2 shadow-md transition transform hover:scale-105">
+                   <span>Müşteri Ekranını Aç 🔗</span>
+                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                   </svg>
+                </a>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-8 flex justify-center bg-gray-50">
+                <div class="bg-white w-full max-w-md p-8 rounded-xl shadow-xl border border-gray-200 h-fit">
+                    <h2 id="previewTitle" class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Form Başlığı</h2>
+                    <form id="previewForm" class="space-y-4">
+                        </form>
+                    <button class="mt-6 w-full bg-blue-600 text-white py-3 rounded-lg font-bold opacity-50 cursor-not-allowed">
+                        🔒 Önizleme Modu (Kayıt Yapılmaz)
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
+
+    <script>
+        // Editör Kurulumu
+        var editor = CodeMirror.fromTextArea(document.getElementById("jsonEditor"), {
+            mode: "application/json",
+            theme: "dracula",
+            lineNumbers: true,
+            matchBrackets: true,
+            autoCloseBrackets: true
+        });
+
+        // JSON Dosyasını Oku ve Editöre Yaz
+        function loadJson() {
+            fetch('form_structure.json?v=' + new Date().getTime())
+                .then(response => response.json())
+                .then(data => {
+                    editor.setValue(JSON.stringify(data, null, 4));
+                    renderForm(data);
+                })
+                .catch(error => console.error('Hata:', error));
+        }
+
+        // Formu Ekrana Çiz
+        function renderForm(data) {
+            document.getElementById('previewTitle').innerText = data.form_title;
+            const container = document.getElementById('previewForm');
+            container.innerHTML = '';
+
+            data.fields.forEach(field => {
+                let html = `<div><label class="block text-sm font-medium text-gray-700 mb-1">${field.label}</label>`;
+
+                if (field.type === 'select') {
+                    html += `<select class="w-full p-2 border rounded bg-gray-50">`;
+                    field.options.forEach(opt => {
+                        html += `<option>${opt}</option>`;
+                    });
+                    html += `</select>`;
+                } else {
+                    html += `<input type="${field.type}" class="w-full p-2 border rounded bg-gray-50" placeholder="${field.label} giriniz...">`;
+                }
+                html += `</div>`;
+                container.innerHTML += html;
+            });
+
+            document.getElementById('statusMsg').innerText = "Son güncelleme: " + new Date().toLocaleTimeString();
+        }
+
+        // Elle Düzenlenirse Güncelle
+        function updatePreview() {
+            try {
+                const data = JSON.parse(editor.getValue());
+                renderForm(data);
+                document.getElementById('statusMsg').innerText = "✅ Form güncellendi!";
+            } catch (e) {
+                alert("Hatalı JSON formatı! Lütfen parantezleri kontrol et.");
+            }
+        }
+
+        // Her 3 saniyede bir dosyayı kontrol et (Python değiştirdi mi?)
+        // setInterval(loadJson, 3000);
+
+        // Başlangıçta yükle
+        loadJson();
+    </script>
+</body>
+</html>
